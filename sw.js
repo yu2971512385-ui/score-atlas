@@ -1,4 +1,4 @@
-const CACHE = "score-atlas-v2";
+const CACHE = "score-atlas-v3";
 const APP_SHELL = ["./", "./index.html", "./styles.css", "./app.js", "./data.js", "./manifest.webmanifest", "./assets/icon.svg", "./assets/lucide.min.js"];
 
 self.addEventListener("install", event => {
