@@ -1,0 +1,17 @@
+{
+  "name": "谱典 · 古典音乐人物与曲谱",
+  "short_name": "谱典",
+  "description": "按乐器、作曲家与作品浏览公版曲谱。",
+  "start_url": "./#/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#182126",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
