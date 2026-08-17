@@ -23,8 +23,18 @@
 
   const instrumentAccents = {
     violin: "#b93f32",
+    viola: "#7b5548",
     cello: "#b78320",
+    "double-bass": "#705f34",
+    guitar: "#b85e37",
     piano: "#356785",
+    organ: "#694f75",
+    flute: "#3c7f88",
+    clarinet: "#4c5f6d",
+    oboe: "#55764b",
+    bassoon: "#8b513f",
+    horn: "#ad7625",
+    trumpet: "#b94c35",
     choir: "#1f7469"
   };
 
@@ -221,7 +231,7 @@
         <div class="stats-inner">
           <div class="stat"><strong>${data.instruments.length}</strong><span>核心分类</span></div>
           <div class="stat"><strong>${data.people.length}</strong><span>作曲家、演奏家与团体</span></div>
-          <div class="stat"><strong>${data.works.length}</strong><span>首批代表作品</span></div>
+          <div class="stat"><strong>${data.works.length}</strong><span>已收录作品与曲谱</span></div>
           <div class="stat"><strong>${downloadCount}</strong><span>已核验开放下载</span></div>
         </div>
       </section>
@@ -259,7 +269,7 @@
     data.people.filter(person => person.instruments?.includes(instrument.id)).forEach(person => personIds.add(person.id));
     const preview = firstPreviewForInstrument(instrument.id);
     return `
-      <a class="instrument-card ${escapeHtml(instrument.id)}" href="#/instrument/${encodeURIComponent(instrument.id)}">
+      <a class="instrument-card ${escapeHtml(instrument.id)}" style="--instrument-accent:${escapeHtml(instrumentAccents[instrument.id] || "#5b6970")}" href="#/instrument/${encodeURIComponent(instrument.id)}">
         <div class="instrument-art" ${preview ? `style="background-image:url('${escapeHtml(preview)}')"` : ""}></div>
         <div class="instrument-copy">
           <p>${escapeHtml(instrument.family)} · ${escapeHtml(instrument.original)}</p>
@@ -289,6 +299,8 @@
     const genres = [...new Set(allWorks.map(work => work.genre))].sort((a, b) => a.localeCompare(b, "zh-CN"));
     const genre = params.get("genre") || "all";
     const works = genre === "all" ? allWorks : allWorks.filter(work => work.genre === genre);
+    const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
+    const visibleWorks = works.slice(0, page * 36);
     const tabHref = target => href(`instrument/${instrumentId}`, { tab: target });
     const tabs = `
       <nav class="segmented" aria-label="${escapeHtml(instrument.name)}视图">
@@ -300,13 +312,13 @@
     if (tab === "works") {
       content = `
         <div class="filter-bar">
-          <p class="filter-summary">当前显示 ${works.length} 部作品，${works.filter(work => work.downloadUrl).length} 份已核验开放下载。</p>
+          <p class="filter-summary">共 ${works.length} 部作品，${works.filter(work => work.downloadUrl).length} 份已核验开放下载；当前显示 ${visibleWorks.length} 部。</p>
           <select class="select-control" data-genre-filter="${escapeHtml(instrumentId)}" aria-label="按体裁筛选">
             <option value="all">全部体裁</option>
             ${genres.map(item => `<option value="${escapeHtml(item)}" ${item === genre ? "selected" : ""}>${escapeHtml(item)}</option>`).join("")}
           </select>
         </div>
-        ${works.length ? `<div class="work-grid">${works.map(workCard).join("")}</div>` : emptyState("没有匹配作品", "请切换体裁筛选。", "list-filter")}`;
+        ${works.length ? `<div class="work-grid">${visibleWorks.map(workCard).join("")}</div>${visibleWorks.length < works.length ? `<div class="load-more"><a class="button secondary" href="${href(`instrument/${instrumentId}`, { tab: "works", genre: genre === "all" ? "" : genre, page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(36, works.length - visibleWorks.length)} 部</a></div>` : ""}` : emptyState("没有匹配作品", "请切换体裁筛选。", "list-filter")}`;
     } else if (tab === "composers") {
       content = composers.length ? `<div class="people-grid">${composers.map(personCard).join("")}</div>` : emptyState("暂无作曲家", "该分类尚在补充人物资料。", "users");
     } else {
@@ -461,7 +473,7 @@
       body = `<div class="search-groups">
         ${results.instruments.length ? `<section><div class="search-group-head"><h2>分类</h2><span>${results.instruments.length} 项</span></div><div class="instrument-grid">${results.instruments.map(instrumentCard).join("")}</div></section>` : ""}
         ${results.people.length ? `<section><div class="search-group-head"><h2>人物与团体</h2><span>${results.people.length} 项</span></div><div class="people-grid">${results.people.map(personCard).join("")}</div></section>` : ""}
-        ${results.works.length ? `<section><div class="search-group-head"><h2>作品与曲谱</h2><span>${results.works.length} 项</span></div><div class="work-grid">${results.works.map(workCard).join("")}</div></section>` : ""}
+        ${results.works.length ? `<section><div class="search-group-head"><h2>作品与曲谱</h2><span>${results.works.length} 项${results.works.length > 48 ? " · 显示前 48 项" : ""}</span></div><div class="work-grid">${results.works.slice(0, 48).map(workCard).join("")}</div>${results.works.length > 48 ? `<p class="result-hint">请加入作品号、作曲家或体裁关键词缩小搜索范围。</p>` : ""}</section>` : ""}
       </div>`;
     }
     return `${pageHero({
@@ -496,7 +508,7 @@
       description: "作品本体进入公共领域，不等于任何现代编订、指法、改编或排版版本都可自由下载。",
       crumbs: [{ label: "首页", href: "#/" }, { label: "来源与版权" }]
     })}<section class="page-section"><div class="page-width">
-      <div class="notice"><h2>收录范围</h2><p>当前是第一批精选目录，不代表世界全部音乐家与曲谱。平台优先给出可核验的公版或开放授权来源，现代受保护作品不提供未授权 PDF。</p></div>
+      <div class="notice"><h2>收录范围</h2><p>当前是持续扩充的精选目录，不代表世界全部音乐家与曲谱。平台优先给出可核验的公版或开放授权来源，现代受保护作品不提供未授权 PDF。</p></div>
       <div style="height:32px"></div>
       <div class="source-list">${data.sources.map(source => `<article class="source-item"><h3>${escapeHtml(source.name)}</h3><p>${escapeHtml(source.description)}</p><div class="source-links"><a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">访问资料库<i data-lucide="external-link"></i></a><a class="text-link" href="${escapeHtml(source.rightsUrl)}" target="_blank" rel="noopener noreferrer">授权说明<i data-lucide="shield-check"></i></a></div></article>`).join("")}</div>
     </div></section>`;
@@ -548,6 +560,8 @@
       ? `${workById.get(parts[1])?.title || "作品"} · 谱典`
       : root === "person"
         ? `${personById.get(parts[1])?.name || "人物"} · 谱典`
+        : root === "instrument"
+          ? `${instrumentById.get(parts[1])?.name || "乐器"} · 谱典`
         : "谱典 · 古典音乐人物与曲谱";
   }
 
