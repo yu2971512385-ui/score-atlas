@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#182126">
+  <meta name="color-scheme" content="light">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="description" content="按乐器、作曲家与作品浏览古典音乐曲谱，查看合法公版 PDF 与权威来源。">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="styles.css">
+  <title>谱典 · 古典音乐人物与曲谱</title>
+</head>
+<body>
+  <a class="skip-link" href="#app">跳到主内容</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#/" aria-label="谱典首页">
+        <span class="brand-mark" aria-hidden="true">谱</span>
+        <span>
+          <strong>谱典</strong>
+          <small>Score Atlas</small>
+        </span>
+      </a>
+
+      <form class="header-search" id="header-search" role="search">
+        <i data-lucide="search" aria-hidden="true"></i>
+        <input id="header-search-input" name="q" type="search" autocomplete="off" placeholder="搜作曲家、作品、作品号…" aria-label="搜索曲谱资料库">
+        <button class="icon-button clear-search" type="button" aria-label="清除搜索" title="清除搜索" hidden>
+          <i data-lucide="x" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <nav class="desktop-nav" aria-label="主导航">
+        <a href="#/instruments">分类</a>
+        <a href="#/people">人物</a>
+        <a href="#/favorites">收藏</a>
+        <a class="icon-button" href="#/about" aria-label="资料与版权说明" title="资料与版权说明">
+          <i data-lucide="info" aria-hidden="true"></i>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app" tabindex="-1"></main>
+
+  <nav class="mobile-nav" aria-label="手机导航">
+    <a href="#/" data-nav="home"><i data-lucide="house" aria-hidden="true"></i><span>首页</span></a>
+    <a href="#/instruments" data-nav="instruments"><i data-lucide="library" aria-hidden="true"></i><span>分类</span></a>
+    <a href="#/search" data-nav="search"><i data-lucide="search" aria-hidden="true"></i><span>搜索</span></a>
+    <a href="#/favorites" data-nav="favorites"><i data-lucide="bookmark" aria-hidden="true"></i><span>收藏</span></a>
+  </nav>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <noscript>请开启 JavaScript 以浏览、搜索和收藏曲谱。</noscript>
+  <script src="assets/lucide.min.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
