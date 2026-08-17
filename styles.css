@@ -383,6 +383,7 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
   color: white;
   text-decoration: none;
   isolation: isolate;
+  border-bottom: 4px solid var(--instrument-accent, var(--teal));
 }
 
 .instrument-art {
@@ -405,11 +406,6 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
 }
 
 .instrument-card:hover .instrument-art { transform: scale(1.055); }
-.instrument-card.violin { border-bottom: 4px solid var(--red); }
-.instrument-card.cello { border-bottom: 4px solid var(--gold); }
-.instrument-card.piano { border-bottom: 4px solid var(--blue); }
-.instrument-card.choir { border-bottom: 4px solid var(--teal); }
-
 .instrument-copy { width: 100%; padding: 22px; }
 .instrument-copy p { margin: 0; color: #cdd5d7; font-size: 12px; }
 .instrument-copy h3 { margin: 4px 0 8px; font-family: Georgia, "Songti SC", serif; font-size: 25px; line-height: 1.2; }
@@ -419,6 +415,19 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
+}
+
+.load-more {
+  display: flex;
+  justify-content: center;
+  padding-top: 28px;
+}
+
+.result-hint {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
 }
 
 .work-card {
