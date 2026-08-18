@@ -18,7 +18,7 @@
     composer: "作曲家",
     performer: "演奏家",
     conductor: "指挥家",
-    ensemble: "合唱团"
+    ensemble: "团体"
   };
 
   const instrumentAccents = {
@@ -35,6 +35,18 @@
     bassoon: "#8b513f",
     horn: "#ad7625",
     trumpet: "#b94c35",
+    trombone: "#786b3c",
+    harp: "#9b6d32",
+    harpsichord: "#7c586c",
+    lute: "#9d6342",
+    mandolin: "#a65b37",
+    recorder: "#478187",
+    percussion: "#8a473e",
+    erhu: "#a63e34",
+    pipa: "#95622e",
+    guzheng: "#7b6632",
+    dizi: "#32736e",
+    sheng: "#7b5446",
     choir: "#1f7469"
   };
 
@@ -235,13 +247,20 @@
           <div class="stat"><strong>${downloadCount}</strong><span>已核验开放下载</span></div>
         </div>
       </section>
+      <section class="arranger-promo">
+        <div class="page-width arranger-promo-inner">
+          <div class="arranger-promo-icon"><i data-lucide="wand-sparkles"></i></div>
+          <div><p class="eyebrow">New · Title to Score</p><h2>输入曲名，生成不同乐器的旋律谱</h2><p>开放旋律可自动换谱号、移调、试听，并打印或保存为 PDF；自有 ABC 文件只在本机处理。</p></div>
+          <a class="button primary" href="#/arranger"><i data-lucide="music-2"></i>打开智能转谱</a>
+        </div>
+      </section>
       <section class="page-section">
         <div class="page-width">
           <div class="section-head">
             <div><h2>按乐器与演唱形式</h2><p>作曲家、演奏家与作品通过真实曲目关系联系，不混淆创作与演奏身份。</p></div>
             <a class="section-link" href="#/instruments">全部分类<i data-lucide="arrow-right"></i></a>
           </div>
-          <div class="instrument-grid">${data.instruments.map(instrumentCard).join("")}</div>
+          <div class="instrument-grid">${data.instruments.slice(0, 12).map(instrumentCard).join("")}</div>
         </div>
       </section>
       <section class="page-section">
@@ -338,7 +357,7 @@
       ["all", "全部"],
       ["composer", "作曲家"],
       ["performer", "演奏家"],
-      ["ensemble", "合唱团"]
+      ["ensemble", "团体"]
     ];
     const people = role === "all" ? data.people : data.people.filter(person => person.roles.includes(role));
     return `${pageHero({
@@ -509,6 +528,8 @@
       crumbs: [{ label: "首页", href: "#/" }, { label: "来源与版权" }]
     })}<section class="page-section"><div class="page-width">
       <div class="notice"><h2>收录范围</h2><p>当前是持续扩充的精选目录，不代表世界全部音乐家与曲谱。平台优先给出可核验的公版或开放授权来源，现代受保护作品不提供未授权 PDF。</p></div>
+      <div style="height:18px"></div>
+      <div class="notice generator-notice"><h2>智能转谱边界</h2><p>内置曲名只对应已核验的公共领域或开放旋律，生成内容是单声部乐器适配谱，不是自动仿制现代歌曲、钢琴伴奏或合唱和声。用户导入的 ABC 文件仅在本机浏览器处理。</p></div>
       <div style="height:32px"></div>
       <div class="source-list">${data.sources.map(source => `<article class="source-item"><h3>${escapeHtml(source.name)}</h3><p>${escapeHtml(source.description)}</p><div class="source-links"><a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">访问资料库<i data-lucide="external-link"></i></a><a class="text-link" href="${escapeHtml(source.rightsUrl)}" target="_blank" rel="noopener noreferrer">授权说明<i data-lucide="shield-check"></i></a></div></article>`).join("")}</div>
     </div></section>`;
@@ -546,6 +567,7 @@
     else if (root === "person") html = renderPerson(parts[1]);
     else if (root === "work") html = renderWork(parts[1]);
     else if (root === "search") html = renderSearch(params);
+    else if (root === "arranger") html = window.ScoreAtlasArranger?.page() || renderNotFound();
     else if (root === "favorites") html = renderFavorites();
     else if (root === "about") html = renderAbout();
     else html = renderNotFound();
@@ -555,6 +577,7 @@
     updateNavigation(root);
     hydrateIcons();
     setupImageFallbacks();
+    if (root === "arranger") window.ScoreAtlasArranger?.mount({ showToast, data });
     if (!preserveScroll) window.scrollTo({ top: 0, behavior: "instant" });
     document.title = root === "work"
       ? `${workById.get(parts[1])?.title || "作品"} · 谱典`
@@ -562,6 +585,8 @@
         ? `${personById.get(parts[1])?.name || "人物"} · 谱典`
         : root === "instrument"
           ? `${instrumentById.get(parts[1])?.name || "乐器"} · 谱典`
+          : root === "arranger"
+            ? "智能转谱 · 谱典"
         : "谱典 · 古典音乐人物与曲谱";
   }
 
@@ -632,6 +657,6 @@
   render();
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4.2").catch(() => {}));
   }
 })();
