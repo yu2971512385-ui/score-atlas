@@ -21,8 +21,11 @@
     { id: "piano", name: "钢琴右手旋律", original: "Piano melody", clef: "treble", written: 0, octave: 0, program: 0 }
   ];
 
-  const state = { tuneId: tunes[0]?.id, profileId: "violin", octaveAdjustment: 0, customAbc: "", customTitle: "", visual: null, synth: null, generatedAbc: "" };
+  const state = { tuneId: tunes[0]?.id, profileId: "violin", octaveAdjustment: 0, customAbc: "", customTitle: "", customSource: "", visual: null, synth: null, generatedAbc: "", mascot: null };
   let catalogData = null;
+  let mediaRecorder = null;
+  let recordingStream = null;
+  let recordingTimer = null;
   const esc = (value = "") => String(value).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
   const normalize = (value = "") => String(value).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[\s·—–_.,'"()[\]{}:/\\-]+/g, "");
 
@@ -40,7 +43,7 @@
       <section class="page-hero arranger-hero">
         <div class="page-hero-inner">
           <nav class="breadcrumb" aria-label="面包屑"><a href="#/">首页</a><i data-lucide="chevron-right"></i><span>智能转谱</span></nav>
-          <div class="page-hero-row"><div class="page-title"><p class="eyebrow">Title to Score</p><h1>智能转谱</h1><p class="description">按曲名调用开放旋律，为不同乐器自动换谱号、移调和适配音域；所有处理均在当前设备完成。</p></div></div>
+          <div class="page-hero-row"><div class="page-title"><p class="eyebrow">Title & Audio to Score</p><h1>智能转谱</h1><p class="description">可搜索已核验开放旋律，或上传、录制自己有权使用的音频提取主旋律；为不同乐器自动换谱号、移调和适配音域，全程不上传。</p></div></div>
         </div>
       </section>
       <section class="page-section arranger-section">
@@ -61,6 +64,26 @@
               <option value="12">再升高八度</option>
             </select>
             <div class="divider"></div>
+            <details class="abc-import audio-import">
+              <summary><i data-lucide="audio-lines"></i>从音频提取主旋律 <small>Beta</small></summary>
+              <p>适合清晰的清唱、哼唱或单一乐器；成品流行歌曲中的人声、和声与伴奏会彼此干扰，输出仅作可编辑草稿。音频仅在本机处理，不会上传。</p>
+              <label class="field-label" for="audio-title">曲谱标题</label>
+              <input class="audio-text-input" id="audio-title" type="text" maxlength="80" placeholder="例：我的哼唱片段">
+              <label class="field-label" for="audio-bpm">节速（BPM）</label>
+              <input class="audio-text-input" id="audio-bpm" type="number" inputmode="numeric" min="40" max="220" value="100">
+              <input id="audio-file" type="file" accept="audio/*,.mp3,.m4a,.wav,.aac,.ogg,.webm" hidden>
+              <div class="audio-action-grid">
+                <label class="button secondary" for="audio-file"><i data-lucide="folder-open"></i>选择音频</label>
+                <button class="button secondary" type="button" id="start-recording"><i data-lucide="mic"></i>开始哼唱</button>
+                <button class="button secondary" type="button" id="stop-recording" hidden><i data-lucide="square"></i>停止并转录</button>
+              </div>
+              <div class="audio-progress" id="audio-progress" hidden>
+                <progress max="1" value="0"></progress>
+                <span>等待音频</span>
+              </div>
+              <p class="audio-limit">限 30 MB / 90 秒。请仅使用您自己创作、演奏或已获授权的音频。</p>
+            </details>
+            <div class="divider"></div>
             <details class="abc-import">
               <summary><i data-lucide="file-up"></i>导入本人有权使用的 ABC</summary>
               <p>文件只在本机读取，不会上传。支持粘贴 ABC 文本或选择 .abc / .txt 文件。</p>
@@ -69,7 +92,7 @@
               <textarea id="abc-input" rows="8" spellcheck="false" placeholder="X:1&#10;T:我的旋律&#10;M:4/4&#10;L:1/4&#10;K:C&#10;C D E F | G4 |"></textarea>
               <button class="button secondary" type="button" id="apply-abc"><i data-lucide="check"></i>应用 ABC</button>
             </details>
-            <div class="rights-mini"><i data-lucide="shield-check"></i><p>现代受保护曲目不会仅凭名称生成旋律。可导入您创作或已获授权的 ABC 文件。</p></div>
+            <div class="rights-mini"><i data-lucide="shield-check"></i><p>现代受保护曲目不会仅凭名称复制旋律。可上传您创作、演奏或已获授权的音频，也可导入 ABC。</p></div>
           </aside>
           <div class="arranger-workspace">
             <div class="score-toolbar">
@@ -133,10 +156,10 @@
       state.visual = rendered[0];
       document.querySelector("#score-status")?.classList.remove("warning");
       document.querySelector("#score-title").textContent = state.customAbc ? (state.customTitle || "自有 ABC 旋律") : tune.title;
-      document.querySelector("#score-kicker").textContent = state.customAbc ? "本机导入" : `${tune.composer} · ${tune.era}`;
+      document.querySelector("#score-kicker").textContent = state.customAbc ? (state.customSource === "audio" ? "本机音频转录 · 自动草稿" : "本机导入") : `${tune.composer} · ${tune.era}`;
       document.querySelector("#score-status span").textContent = `已按${profile.name}生成 · ${profile.clef === "bass" ? "低音谱号" : profile.clef === "alto" ? "中音谱号" : "高音谱号"}${profile.written ? ` · 记谱移调 +${profile.written} 半音` : ""}`;
       document.querySelector("#score-source").innerHTML = state.customAbc
-        ? `<span><i data-lucide="lock"></i>本机文件 · 未上传</span>`
+        ? `<span><i data-lucide="lock"></i>${state.customSource === "audio" ? "本机音频识别草稿" : "本机文件"} · 未上传</span>`
         : `<span><i data-lucide="shield-check"></i>${esc(tune.rights)}</span><a href="${esc(tune.sourceUrl)}" target="_blank" rel="noopener noreferrer">查看旋律资料<i data-lucide="external-link"></i></a>`;
       window.lucide?.createIcons({ attrs: { "aria-hidden": "true" } });
     } catch (error) {
@@ -179,6 +202,110 @@
     }
   }
 
+  function audioErrorMessage(error) {
+    const messages = {
+      FILE_TOO_LARGE: "音频文件不能超过 30 MB",
+      TOO_LONG: "音频超过 90 秒，请截取旋律清晰的片段",
+      TOO_SHORT: "音频太短，请提供至少 1 秒的旋律",
+      DECODE_FAILED: "浏览器无法解码此格式，建议改用 WAV、MP3 或 M4A",
+      NO_PITCH: "未检测到稳定单声部，请改用清唱、哼唱或单一乐器片段",
+      UNSUPPORTED: "当前浏览器不支持本机音频解码"
+    };
+    return messages[error?.message] || "音频转录失败，请更换更清晰的单声部片段";
+  }
+
+  function updateAudioProgress(progress, message, visible = true) {
+    const box = document.querySelector("#audio-progress");
+    if (!box) return;
+    box.hidden = !visible;
+    const meter = box.querySelector("progress");
+    const label = box.querySelector("span");
+    if (meter) meter.value = progress;
+    if (label) label.textContent = message;
+  }
+
+  async function processAudio(blob, fallbackTitle, showToast) {
+    const transcriber = window.ScoreAtlasAudioTranscriber;
+    if (!transcriber) return showToast?.("音频转录模块未载入，请刷新后重试");
+    const titleInput = document.querySelector("#audio-title");
+    const bpmInput = document.querySelector("#audio-bpm");
+    const title = titleInput?.value.trim() || fallbackTitle || "本机音频主旋律";
+    if (titleInput && !titleInput.value.trim()) titleInput.value = title;
+    document.querySelectorAll("#audio-file, #start-recording, #stop-recording").forEach(control => { control.disabled = true; });
+    try {
+      const result = await transcriber.transcribe(blob, {
+        title,
+        bpm: bpmInput?.value,
+        onProgress: ({ progress, message }) => updateAudioProgress(progress, message)
+      });
+      state.customAbc = result.abc;
+      state.customTitle = result.title;
+      state.customSource = "audio";
+      const abcInput = document.querySelector("#abc-input");
+      if (abcInput) abcInput.value = result.abc;
+      const results = document.querySelector("#tune-results");
+      const search = document.querySelector("#tune-search");
+      if (results) results.innerHTML = tuneResults(search?.value || "");
+      makeScore(showToast);
+      updateAudioProgress(1, `转录完成 · ${Math.round(result.duration)} 秒 · ${result.bpm} BPM`);
+      showToast?.("主旋律草稿已生成，可换乐器、试听或导出");
+    } catch (error) {
+      const message = audioErrorMessage(error);
+      updateAudioProgress(0, message);
+      showToast?.(message);
+    } finally {
+      document.querySelectorAll("#audio-file, #start-recording").forEach(control => { control.disabled = false; });
+      const stopButton = document.querySelector("#stop-recording");
+      if (stopButton) stopButton.disabled = false;
+    }
+  }
+
+  function stopRecordingTracks() {
+    clearInterval(recordingTimer);
+    recordingTimer = null;
+    recordingStream?.getTracks().forEach(track => track.stop());
+    recordingStream = null;
+  }
+
+  async function startRecording(showToast) {
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return showToast?.("当前浏览器不支持录音，请改用音频文件");
+    if (mediaRecorder?.state === "recording") return;
+    try {
+      recordingStream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false }
+      });
+      const preferredTypes = ["audio/webm;codecs=opus", "audio/mp4", "audio/webm"];
+      const mimeType = preferredTypes.find(type => MediaRecorder.isTypeSupported?.(type));
+      mediaRecorder = new MediaRecorder(recordingStream, mimeType ? { mimeType } : undefined);
+      const chunks = [];
+      let elapsed = 0;
+      mediaRecorder.addEventListener("dataavailable", event => { if (event.data.size) chunks.push(event.data); });
+      mediaRecorder.addEventListener("stop", () => {
+        const blob = new Blob(chunks, { type: mediaRecorder.mimeType || "audio/webm" });
+        stopRecordingTracks();
+        document.querySelector("#start-recording")?.removeAttribute("hidden");
+        document.querySelector("#stop-recording")?.setAttribute("hidden", "");
+        processAudio(blob, "我的哼唱旋律", showToast);
+      }, { once: true });
+      mediaRecorder.start(500);
+      document.querySelector("#start-recording")?.setAttribute("hidden", "");
+      document.querySelector("#stop-recording")?.removeAttribute("hidden");
+      updateAudioProgress(0, "正在录音 · 0 秒（最长 60 秒）");
+      recordingTimer = setInterval(() => {
+        elapsed += 1;
+        updateAudioProgress(Math.min(elapsed / 60, 0.98), `正在录音 · ${elapsed} 秒（最长 60 秒）`);
+        if (elapsed >= 60 && mediaRecorder?.state === "recording") mediaRecorder.stop();
+      }, 1000);
+    } catch {
+      stopRecordingTracks();
+      showToast?.("无法使用麦克风，请允许录音权限或改用音频文件");
+    }
+  }
+
+  function stopRecording() {
+    if (mediaRecorder?.state === "recording") mediaRecorder.stop();
+  }
+
   function mount({ showToast, data } = {}) {
     catalogData = data || null;
     const search = document.querySelector("#tune-search");
@@ -189,6 +316,7 @@
       if (exactTune) {
         state.tuneId = exactTune.id;
         state.customAbc = "";
+        state.customSource = "";
       }
       results.innerHTML = tuneResults(search.value);
       const hasOpenTune = !needle || tunes.some(tune => normalize([tune.title, tune.original, tune.composer, ...(tune.aliases || [])].join(" ")).includes(needle));
@@ -209,6 +337,7 @@
       if (!option) return;
       state.tuneId = option.dataset.tuneId;
       state.customAbc = "";
+      state.customSource = "";
       search.value = selectedTune()?.title || "";
       results.innerHTML = tuneResults(search.value);
       makeScore(showToast);
@@ -221,6 +350,15 @@
       state.octaveAdjustment = Number(event.target.value) || 0;
       makeScore(showToast);
     });
+    document.querySelector("#audio-file")?.addEventListener("change", async event => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const fallbackTitle = file.name.replace(/\.[^.]+$/, "").slice(0, 80) || "本机音频主旋律";
+      await processAudio(file, fallbackTitle, showToast);
+      event.target.value = "";
+    });
+    document.querySelector("#start-recording")?.addEventListener("click", () => startRecording(showToast));
+    document.querySelector("#stop-recording")?.addEventListener("click", stopRecording);
     document.querySelector("#abc-file")?.addEventListener("change", async event => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -236,6 +374,7 @@
       if (!value) return showToast?.("请先粘贴或选择 ABC 文件");
       state.customAbc = value;
       state.customTitle = value.match(/^T:(.*)$/m)?.[1]?.trim() || "自有 ABC 旋律";
+      state.customSource = "abc";
       results.innerHTML = tuneResults(search.value);
       makeScore(showToast);
     });
@@ -248,7 +387,19 @@
       setTimeout(() => document.body.classList.remove("printing-score"), 500);
     });
     makeScore(showToast);
+    state.mascot?.destroy?.();
+    state.mascot = window.ScoreAtlasMascot?.attachArranger() || null;
   }
 
-  window.ScoreAtlasArranger = { page, mount, stop: () => state.synth?.stop?.() };
+  window.ScoreAtlasArranger = {
+    page,
+    mount,
+    stop: () => {
+      state.synth?.stop?.();
+      state.mascot?.destroy?.();
+      state.mascot = null;
+      if (mediaRecorder?.state === "recording") mediaRecorder.stop();
+      else stopRecordingTracks();
+    }
+  };
 })();
