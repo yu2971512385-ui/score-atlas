@@ -6,14 +6,18 @@
   <meta name="theme-color" content="#182126">
   <meta name="color-scheme" content="light">
   <meta name="format-detection" content="telephone=no">
-  <meta name="description" content="按乐器、作曲家与作品浏览古典音乐曲谱，查看合法公版 PDF 与权威来源。">
+  <meta name="description" content="按乐器、作曲家与作品浏览开放曲谱，并在本机将旋律或授权音频转为不同乐器谱。">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=4.2">
+  <link rel="stylesheet" href="styles.css?v=5.0">
+  <link rel="stylesheet" href="mascot.css?v=5.0">
   <title>谱典 · 古典音乐人物与曲谱</title>
 </head>
 <body>
   <a class="skip-link" href="#app">跳到主内容</a>
+  <div class="boot-loader" id="boot-loader" role="status" aria-label="正在打开曲谱库">
+    <div class="boot-mascot" id="boot-mascot"></div>
+  </div>
 
   <header class="site-header">
     <div class="header-inner">
@@ -59,10 +63,19 @@
 
   <noscript>请开启 JavaScript 以浏览、搜索和收藏曲谱。</noscript>
   <script src="assets/lucide.min.js"></script>
-  <script src="assets/abcjs-basic-min.js?v=4.2"></script>
-  <script src="data.js?v=4.2"></script>
-  <script src="tunes.js?v=4.2"></script>
-  <script src="arranger.js?v=4.2"></script>
-  <script src="app.js?v=4.2"></script>
+  <script src="mascot.js?v=5.0"></script>
+  <script>
+    (() => {
+      const ids = Object.keys(window.ScoreAtlasMascot?.instruments || {});
+      const instrumentId = ids[Math.floor(Math.random() * ids.length)] || "piano";
+      window.__scoreAtlasBootController = window.ScoreAtlasMascot?.mount("#boot-mascot", { instrumentId, loading: true });
+    })();
+  </script>
+  <script src="assets/abcjs-basic-min.js?v=5.0"></script>
+  <script src="data.js?v=5.0"></script>
+  <script src="tunes.js?v=5.0"></script>
+  <script src="audio-transcriber.js?v=5.0"></script>
+  <script src="arranger.js?v=5.0"></script>
+  <script src="app.js?v=5.0"></script>
 </body>
 </html>
