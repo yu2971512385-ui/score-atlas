@@ -1,0 +1,235 @@
+.score-atlas-mascot {
+  --sam-ink: #182126;
+  --sam-line: #d6dddc;
+  --sam-paper: #fffdf8;
+  display: block;
+  min-width: 0;
+  color: var(--sam-ink);
+}
+
+.boot-loader {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  overflow: hidden;
+  background: #f3f5f4;
+  opacity: 1;
+  transition: opacity 260ms ease, visibility 260ms ease;
+}
+
+.boot-loader.is-ready { visibility: hidden; opacity: 0; }
+.boot-mascot { width: min(620px, 100%); }
+.boot-mascot .sam-stage {
+  width: 100%;
+  grid-template-columns: minmax(150px, 220px) minmax(0, 270px);
+  justify-content: center;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.boot-mascot .sam-stage::before { display: none; }
+.boot-mascot .sam-svg { width: min(100%, 210px); }
+.boot-mascot .sam-copy strong { font-size: 22px; }
+.boot-mascot .sam-reroll { display: none; }
+
+.sam-arranger-slot {
+  margin: 0 0 24px;
+}
+
+.sam-stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(132px, 0.86fr) minmax(118px, 1fr);
+  align-items: center;
+  min-height: 174px;
+  overflow: hidden;
+  border: 1px solid var(--sam-line);
+  border-radius: 8px;
+  background: var(--sam-paper);
+  box-shadow: 0 8px 24px rgba(24, 33, 38, 0.07);
+}
+
+.sam-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(24, 33, 38, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 33, 38, 0.045) 1px, transparent 1px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(to right, black, transparent 74%);
+}
+
+.sam-visual {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  padding: 7px 0 5px 5px;
+}
+
+.sam-svg {
+  display: block;
+  width: min(100%, 220px);
+  height: auto;
+  overflow: visible;
+}
+
+.sam-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 34px 20px 8px;
+}
+
+.sam-eyebrow {
+  color: #a83e38;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.sam-copy strong {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 18px;
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.sam-copy small {
+  color: #66747a;
+  font-size: 11px;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+.sam-reroll {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid var(--sam-line);
+  border-radius: 50%;
+  color: var(--sam-ink);
+  background: rgba(255, 253, 248, 0.92);
+  cursor: pointer;
+}
+
+.sam-reroll:hover,
+.sam-reroll:focus-visible {
+  border-color: #28757b;
+  color: #176b73;
+  outline: none;
+}
+
+.sam-reroll svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sam-creature {
+  transform-origin: 50% 82%;
+  animation: sam-arrive 440ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+.sam-instrument {
+  transform-origin: 50% 50%;
+  animation: sam-play 920ms ease-in-out infinite alternate;
+}
+
+.sam-stars {
+  animation: sam-twinkle 1.3s ease-in-out infinite alternate;
+}
+
+.sam-stage.is-loading .sam-creature {
+  animation: sam-listen 700ms ease-in-out infinite alternate;
+}
+
+.sam-stage.is-loading .sam-instrument {
+  animation-play-state: paused;
+}
+
+.sam-stage.is-loading .sam-copy strong::after {
+  content: "···";
+  display: inline-block;
+  width: 1.4em;
+  animation: sam-dots 1.1s steps(4, end) infinite;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+
+@keyframes sam-arrive {
+  from { opacity: 0; transform: translateY(12px) scale(.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes sam-play {
+  from { transform: rotate(-.7deg) translateY(0); }
+  to { transform: rotate(.7deg) translateY(-1px); }
+}
+
+@keyframes sam-listen {
+  from { transform: translateY(1px) rotate(-1deg); }
+  to { transform: translateY(-5px) rotate(1deg); }
+}
+
+@keyframes sam-twinkle {
+  from { opacity: .46; }
+  to { opacity: 1; }
+}
+
+@keyframes sam-dots {
+  0% { width: 0; }
+  100% { width: 1.4em; }
+}
+
+@media (max-width: 760px) {
+  .sam-arranger-slot { margin-bottom: 20px; }
+  .sam-stage {
+    grid-template-columns: minmax(116px, .8fr) minmax(132px, 1.2fr);
+    min-height: 142px;
+  }
+  .sam-visual { padding: 6px 0 3px; }
+  .sam-svg { width: min(100%, 164px); }
+  .sam-copy { padding: 16px 32px 16px 2px; }
+  .sam-copy strong { font-size: 16px; }
+  .sam-copy small { font-size: 10px; }
+}
+
+@media (max-width: 390px) {
+  .sam-stage { grid-template-columns: 116px minmax(0, 1fr); }
+  .sam-copy strong { font-size: 15px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot-loader { transition: none; }
+  .sam-creature,
+  .sam-instrument,
+  .sam-stars,
+  .sam-stage.is-loading .sam-creature,
+  .sam-stage.is-loading .sam-copy strong::after {
+    animation: none;
+  }
+}
+
+@media print {
+  .score-atlas-mascot { display: none !important; }
+}
