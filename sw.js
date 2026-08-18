@@ -1,5 +1,5 @@
-const CACHE = "score-atlas-v4-2";
-const APP_SHELL = ["./", "./index.html", "./styles.css?v=4.2", "./app.js?v=4.2", "./arranger.js?v=4.2", "./tunes.js?v=4.2", "./data.js?v=4.2", "./manifest.webmanifest", "./assets/icon.svg", "./assets/lucide.min.js", "./assets/abcjs-basic-min.js?v=4.2"];
+const CACHE = "score-atlas-v5-0";
+const APP_SHELL = ["./", "./index.html", "./styles.css?v=5.0", "./mascot.css?v=5.0", "./app.js?v=5.0", "./arranger.js?v=5.0", "./audio-transcriber.js?v=5.0", "./mascot.js?v=5.0", "./tunes.js?v=5.0", "./data.js?v=5.0", "./manifest.webmanifest", "./assets/icon.svg", "./assets/lucide.min.js", "./assets/abcjs-basic-min.js?v=5.0"];
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(APP_SHELL)));
