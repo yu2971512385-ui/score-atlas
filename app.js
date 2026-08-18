@@ -13,6 +13,7 @@
   const workById = new Map(data.works.map(item => [item.id, item]));
   const favorites = loadFavorites();
   let toastTimer;
+  let activeRoot = "";
 
   const roleLabels = {
     composer: "作曲家",
@@ -250,7 +251,7 @@
       <section class="arranger-promo">
         <div class="page-width arranger-promo-inner">
           <div class="arranger-promo-icon"><i data-lucide="wand-sparkles"></i></div>
-          <div><p class="eyebrow">New · Title to Score</p><h2>输入曲名，生成不同乐器的旋律谱</h2><p>开放旋律可自动换谱号、移调、试听，并打印或保存为 PDF；自有 ABC 文件只在本机处理。</p></div>
+          <div><p class="eyebrow">New · Title & Audio to Score</p><h2>搜曲名或导入音频，生成不同乐器的旋律谱</h2><p>开放旋律可直接转谱；清唱、哼唱或单一乐器音频可在本机提取主旋律，再试听、下载 ABC 或保存 PDF。</p></div>
           <a class="button primary" href="#/arranger"><i data-lucide="music-2"></i>打开智能转谱</a>
         </div>
       </section>
@@ -320,6 +321,8 @@
     const works = genre === "all" ? allWorks : allWorks.filter(work => work.genre === genre);
     const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
     const visibleWorks = works.slice(0, page * 36);
+    const visibleComposers = composers.slice(0, page * 48);
+    const visiblePerformers = performers.slice(0, page * 48);
     const tabHref = target => href(`instrument/${instrumentId}`, { tab: target });
     const tabs = `
       <nav class="segmented" aria-label="${escapeHtml(instrument.name)}视图">
@@ -339,9 +342,9 @@
         </div>
         ${works.length ? `<div class="work-grid">${visibleWorks.map(workCard).join("")}</div>${visibleWorks.length < works.length ? `<div class="load-more"><a class="button secondary" href="${href(`instrument/${instrumentId}`, { tab: "works", genre: genre === "all" ? "" : genre, page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(36, works.length - visibleWorks.length)} 部</a></div>` : ""}` : emptyState("没有匹配作品", "请切换体裁筛选。", "list-filter")}`;
     } else if (tab === "composers") {
-      content = composers.length ? `<div class="people-grid">${composers.map(personCard).join("")}</div>` : emptyState("暂无作曲家", "该分类尚在补充人物资料。", "users");
+      content = composers.length ? `<div class="people-grid">${visibleComposers.map(personCard).join("")}</div>${visibleComposers.length < composers.length ? `<div class="load-more"><a class="button secondary" href="${href(`instrument/${instrumentId}`, { tab: "composers", page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(48, composers.length - visibleComposers.length)} 位</a></div>` : ""}` : emptyState("暂无作曲家", "该分类尚在补充人物资料。", "users");
     } else {
-      content = performers.length ? `<div class="people-grid">${performers.map(personCard).join("")}</div>` : emptyState("暂无演奏家或团体", "该分类的演奏档案尚在补充。", "users");
+      content = performers.length ? `<div class="people-grid">${visiblePerformers.map(personCard).join("")}</div>${visiblePerformers.length < performers.length ? `<div class="load-more"><a class="button secondary" href="${href(`instrument/${instrumentId}`, { tab: "performers", page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(48, performers.length - visiblePerformers.length)} 位</a></div>` : ""}` : emptyState("暂无演奏家或团体", "该分类的演奏档案尚在补充。", "users");
     }
     return `${pageHero({
       eyebrow: `${instrument.family} · ${instrument.original}`,
@@ -360,6 +363,8 @@
       ["ensemble", "团体"]
     ];
     const people = role === "all" ? data.people : data.people.filter(person => person.roles.includes(role));
+    const page = Math.max(1, Number.parseInt(params.get("page") || "1", 10) || 1);
+    const visiblePeople = people.slice(0, page * 60);
     return `${pageHero({
       eyebrow: "People & Ensembles",
       title: "人物与团体",
@@ -368,17 +373,20 @@
     })}<section class="page-section"><div class="page-width">
       <nav class="segmented" aria-label="人物类型">${options.map(([value, label]) => `<a class="${role === value ? "active" : ""}" href="${href("people", { role: value === "all" ? "" : value })}">${label}</a>`).join("")}</nav>
       <div style="height:24px"></div>
-      <div class="people-grid">${people.map(personCard).join("")}</div>
+      <div class="people-grid">${visiblePeople.map(personCard).join("")}</div>
+      ${visiblePeople.length < people.length ? `<div class="load-more"><a class="button secondary" href="${href("people", { role: role === "all" ? "" : role, page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(60, people.length - visiblePeople.length)} 位</a></div>` : ""}
     </div></section>`;
   }
 
-  function renderPerson(personId) {
+  function renderPerson(personId, params) {
     const person = personById.get(personId);
     if (!person) return renderNotFound();
     const isComposer = person.roles.includes("composer");
     const relatedWorks = isComposer
       ? data.works.filter(work => work.composerId === person.id)
       : (person.repertoire || []).map(id => workById.get(id)).filter(Boolean);
+    const page = Math.max(1, Number.parseInt(params?.get("page") || "1", 10) || 1);
+    const visibleWorks = relatedWorks.slice(0, page * 36);
     const monogram = person.name.replace(/[·•\s]/g, "").slice(0, 2);
     const instrumentLinks = (person.instruments || []).map(id => instrumentById.get(id)).filter(Boolean)
       .map(instrument => `<a class="text-link" href="#/instrument/${instrument.id}">${escapeHtml(instrument.name)}</a>`).join(" · ");
@@ -403,8 +411,8 @@
         <div class="prose"><h2>生平简介</h2><p>${escapeHtml(person.bio)}</p></div>
         <div class="action-row">${sourceButton}</div>
         <section class="related-section">
-          <div class="section-head"><div><h2>${isComposer ? "收录作品" : "代表曲目"}</h2><p>${isComposer ? "按作曲家身份关联，可继续进入曲谱版本。" : "代表曲目不等于创作归属。"}</p></div></div>
-          ${relatedWorks.length ? `<div class="work-grid">${relatedWorks.map(workCard).join("")}</div>` : emptyState("暂无关联作品", "人物资料尚在补充。")}
+          <div class="section-head"><div><h2>${isComposer ? "收录作品" : "代表曲目"}</h2><p>${isComposer ? `共 ${relatedWorks.length} 部，当前显示 ${visibleWorks.length} 部；可继续进入曲谱版本。` : "代表曲目不等于创作归属。"}</p></div></div>
+          ${relatedWorks.length ? `<div class="work-grid">${visibleWorks.map(workCard).join("")}</div>${visibleWorks.length < relatedWorks.length ? `<div class="load-more"><a class="button secondary" href="${href(`person/${person.id}`, { page: page + 1 })}"><i data-lucide="plus"></i>继续显示 ${Math.min(36, relatedWorks.length - visibleWorks.length)} 部</a></div>` : ""}` : emptyState("暂无关联作品", "人物资料尚在补充。")}
         </section>
       </div>
     </div></section>`;
@@ -479,6 +487,18 @@
     };
   }
 
+  function externalLibrarySearch(query) {
+    const encoded = encodeURIComponent(query);
+    return `<aside class="library-search" aria-label="权威曲谱库联查">
+      <div><p class="eyebrow">Library Link</p><h2>在权威曲谱库继续查找</h2><p>站内只直接托管已核验的公共领域或开放授权版本；其他版本请按所在地区在来源页核验。</p></div>
+      <div class="library-search-links">
+        <a class="button secondary" href="https://www.mutopiaproject.org/cgibin/make-table.cgi?searchingfor=${encoded}" target="_blank" rel="noopener noreferrer">Mutopia<i data-lucide="external-link"></i></a>
+        <a class="button secondary" href="https://imslp.org/wiki/Special:Search?search=${encoded}" target="_blank" rel="noopener noreferrer">IMSLP<i data-lucide="external-link"></i></a>
+        <a class="button secondary" href="https://www.cpdl.org/wiki/index.php?search=${encoded}&title=Special%3ASearch" target="_blank" rel="noopener noreferrer">CPDL<i data-lucide="external-link"></i></a>
+      </div>
+    </aside>`;
+  }
+
   function renderSearch(params) {
     const query = params.get("q") || "";
     const results = searchAll(query);
@@ -487,11 +507,11 @@
     if (!query) {
       body = emptyState("开始搜索", "可输入中文名、原文名、作品号、乐器或体裁。", "search");
     } else if (!total) {
-      body = emptyState("没有找到相关资料", "可尝试作曲家姓氏、作品号或乐器名称。", "search-x");
+      body = emptyState("站内没有找到匹配资料", "可继续使用下方权威曲谱库联查。", "search-x");
     } else {
       body = `<div class="search-groups">
         ${results.instruments.length ? `<section><div class="search-group-head"><h2>分类</h2><span>${results.instruments.length} 项</span></div><div class="instrument-grid">${results.instruments.map(instrumentCard).join("")}</div></section>` : ""}
-        ${results.people.length ? `<section><div class="search-group-head"><h2>人物与团体</h2><span>${results.people.length} 项</span></div><div class="people-grid">${results.people.map(personCard).join("")}</div></section>` : ""}
+        ${results.people.length ? `<section><div class="search-group-head"><h2>人物与团体</h2><span>${results.people.length} 项${results.people.length > 48 ? " · 显示前 48 项" : ""}</span></div><div class="people-grid">${results.people.slice(0, 48).map(personCard).join("")}</div></section>` : ""}
         ${results.works.length ? `<section><div class="search-group-head"><h2>作品与曲谱</h2><span>${results.works.length} 项${results.works.length > 48 ? " · 显示前 48 项" : ""}</span></div><div class="work-grid">${results.works.slice(0, 48).map(workCard).join("")}</div>${results.works.length > 48 ? `<p class="result-hint">请加入作品号、作曲家或体裁关键词缩小搜索范围。</p>` : ""}</section>` : ""}
       </div>`;
     }
@@ -508,6 +528,7 @@
       </form>
       <div style="height:32px"></div>
       ${body}
+      ${query ? externalLibrarySearch(query) : ""}
     </div></section>`;
   }
 
@@ -527,9 +548,9 @@
       description: "作品本体进入公共领域，不等于任何现代编订、指法、改编或排版版本都可自由下载。",
       crumbs: [{ label: "首页", href: "#/" }, { label: "来源与版权" }]
     })}<section class="page-section"><div class="page-width">
-      <div class="notice"><h2>收录范围</h2><p>当前是持续扩充的精选目录，不代表世界全部音乐家与曲谱。平台优先给出可核验的公版或开放授权来源，现代受保护作品不提供未授权 PDF。</p></div>
+      <div class="notice"><h2>收录范围</h2><p>站内目录优先收录可核验的公版或开放授权曲谱，并通过 Mutopia、IMSLP 与 CPDL 联查补足不同地区和版本。现代受保护作品不提供未授权 PDF。</p></div>
       <div style="height:18px"></div>
-      <div class="notice generator-notice"><h2>智能转谱边界</h2><p>内置曲名只对应已核验的公共领域或开放旋律，生成内容是单声部乐器适配谱，不是自动仿制现代歌曲、钢琴伴奏或合唱和声。用户导入的 ABC 文件仅在本机浏览器处理。</p></div>
+      <div class="notice generator-notice"><h2>智能转谱边界</h2><p>内置曲名只对应已核验的公共领域或开放旋律。流行歌可由用户导入自己有权使用的音频，在本机提取清晰单声部主旋律；全曲混音、伴奏与合声会降低准确度。平台不会仅凭现代歌名猜造或复制旋律；音频与 ABC 都不上传。</p></div>
       <div style="height:32px"></div>
       <div class="source-list">${data.sources.map(source => `<article class="source-item"><h3>${escapeHtml(source.name)}</h3><p>${escapeHtml(source.description)}</p><div class="source-links"><a class="text-link" href="${escapeHtml(source.url)}" target="_blank" rel="noopener noreferrer">访问资料库<i data-lucide="external-link"></i></a><a class="text-link" href="${escapeHtml(source.rightsUrl)}" target="_blank" rel="noopener noreferrer">授权说明<i data-lucide="shield-check"></i></a></div></article>`).join("")}</div>
     </div></section>`;
@@ -559,12 +580,14 @@
   function render({ preserveScroll = false } = {}) {
     const { parts, params } = parseRoute();
     const root = parts[0] || "";
+    if (activeRoot === "arranger" && root !== "arranger") window.ScoreAtlasArranger?.stop?.();
+    activeRoot = root;
     let html;
     if (!root) html = renderHome();
     else if (root === "instruments") html = renderInstrumentList();
     else if (root === "instrument") html = renderInstrument(parts[1], params);
     else if (root === "people") html = renderPeople(params);
-    else if (root === "person") html = renderPerson(parts[1]);
+    else if (root === "person") html = renderPerson(parts[1], params);
     else if (root === "work") html = renderWork(parts[1]);
     else if (root === "search") html = renderSearch(params);
     else if (root === "arranger") html = window.ScoreAtlasArranger?.page() || renderNotFound();
@@ -656,7 +679,16 @@
   if (!location.hash) history.replaceState(null, "", "#/");
   render();
 
+  const bootLoader = document.querySelector("#boot-loader");
+  if (bootLoader) requestAnimationFrame(() => {
+    bootLoader.classList.add("is-ready");
+    setTimeout(() => {
+      window.__scoreAtlasBootController?.destroy?.();
+      bootLoader.remove();
+    }, 320);
+  });
+
   if ("serviceWorker" in navigator && location.protocol === "https:") {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=4.2").catch(() => {}));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5.0").catch(() => {}));
   }
 })();
