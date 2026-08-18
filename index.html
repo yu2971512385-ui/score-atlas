@@ -9,7 +9,7 @@
   <meta name="description" content="按乐器、作曲家与作品浏览古典音乐曲谱，查看合法公版 PDF 与权威来源。">
   <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=4.2">
   <title>谱典 · 古典音乐人物与曲谱</title>
 </head>
 <body>
@@ -36,6 +36,7 @@
       <nav class="desktop-nav" aria-label="主导航">
         <a href="#/instruments">分类</a>
         <a href="#/people">人物</a>
+        <a href="#/arranger">智能转谱</a>
         <a href="#/favorites">收藏</a>
         <a class="icon-button" href="#/about" aria-label="资料与版权说明" title="资料与版权说明">
           <i data-lucide="info" aria-hidden="true"></i>
@@ -50,6 +51,7 @@
     <a href="#/" data-nav="home"><i data-lucide="house" aria-hidden="true"></i><span>首页</span></a>
     <a href="#/instruments" data-nav="instruments"><i data-lucide="library" aria-hidden="true"></i><span>分类</span></a>
     <a href="#/search" data-nav="search"><i data-lucide="search" aria-hidden="true"></i><span>搜索</span></a>
+    <a href="#/arranger" data-nav="arranger"><i data-lucide="wand-sparkles" aria-hidden="true"></i><span>转谱</span></a>
     <a href="#/favorites" data-nav="favorites"><i data-lucide="bookmark" aria-hidden="true"></i><span>收藏</span></a>
   </nav>
 
@@ -57,7 +59,10 @@
 
   <noscript>请开启 JavaScript 以浏览、搜索和收藏曲谱。</noscript>
   <script src="assets/lucide.min.js"></script>
-  <script src="data.js"></script>
-  <script src="app.js"></script>
+  <script src="assets/abcjs-basic-min.js?v=4.2"></script>
+  <script src="data.js?v=4.2"></script>
+  <script src="tunes.js?v=4.2"></script>
+  <script src="arranger.js?v=4.2"></script>
+  <script src="app.js?v=4.2"></script>
 </body>
 </html>
