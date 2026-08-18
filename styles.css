@@ -825,6 +825,25 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
 .search-group-head h2 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 25px; }
 .search-group-head span { color: var(--muted); font-size: 12px; }
 
+.library-search {
+  margin-top: 36px;
+  padding: 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 28px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal);
+  background: var(--wash);
+}
+
+.library-search h2,
+.library-search p { margin: 0; }
+.library-search h2 { font-family: Georgia, "Songti SC", serif; font-size: 22px; line-height: 1.35; }
+.library-search p:not(.eyebrow) { max-width: 720px; margin-top: 6px; color: var(--muted); font-size: 13px; }
+.library-search-links { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.library-search-links .button { white-space: nowrap; }
+
 .source-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -962,6 +981,24 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
   font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 .abc-import .button { width: 100%; margin-top: 8px; }
+.audio-import summary small { margin-left: auto; border-radius: 3px; padding: 2px 5px; background: var(--teal-soft); font-size: 9px; }
+.audio-text-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0 10px;
+  background: white;
+  color: var(--ink);
+}
+.audio-text-input:focus { border-color: var(--teal); outline: 0; box-shadow: 0 0 0 3px rgba(31, 116, 105, 0.1); }
+.audio-action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.audio-action-grid .button:last-child { grid-column: 1 / -1; }
+.audio-action-grid [hidden] { display: none !important; }
+.audio-progress { margin-top: 10px; }
+.audio-progress progress { width: 100%; height: 7px; accent-color: var(--teal); }
+.audio-progress span { display: block; margin-top: 4px; color: var(--ink-2); font-size: 10px; line-height: 1.45; }
+.abc-import .audio-limit { margin-bottom: 0; font-size: 9px; line-height: 1.5; }
 
 .rights-mini {
   margin-top: 24px;
@@ -1158,6 +1195,9 @@ noscript {
   .arranger-promo h2 { font-size: 21px; }
   .arranger-promo .button { grid-column: 1 / -1; width: 100%; }
   .arranger-layout { width: calc(100% - 20px); grid-template-columns: 1fr; overflow: visible; }
+  .library-search { padding: 20px; grid-template-columns: 1fr; gap: 18px; }
+  .library-search-links { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .library-search-links .button { min-width: 0; padding-inline: 8px; }
   .arranger-controls { border-right: 0; border-bottom: 1px solid var(--line); padding: 20px; }
   .score-toolbar { align-items: flex-start; flex-direction: column; }
   .score-actions { width: 100%; display: grid; grid-template-columns: 1fr 44px 1fr 1.25fr; }
