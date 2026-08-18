@@ -1,7 +1,7 @@
 {
   "name": "谱典 · 古典音乐人物与曲谱",
   "short_name": "谱典",
-  "description": "按乐器、作曲家与作品浏览开放曲谱，并将开放旋律转换为不同乐器的乐谱。",
+  "description": "浏览中外开放曲谱，并在本机将旋律或授权音频转为不同乐器谱。",
   "start_url": "./#/",
   "display": "standalone",
   "background_color": "#ffffff",
