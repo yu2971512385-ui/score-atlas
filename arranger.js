@@ -21,7 +21,7 @@
     { id: "piano", name: "钢琴右手旋律", original: "Piano melody", clef: "treble", written: 0, octave: 0, program: 0 }
   ];
 
-  const state = { tuneId: tunes[0]?.id, profileId: "violin", octaveAdjustment: 0, customAbc: "", customTitle: "", customSource: "", visual: null, synth: null, generatedAbc: "", mascot: null };
+  const state = { tuneId: tunes[0]?.id, profileId: "violin", octaveAdjustment: 0, customAbc: "", customTitle: "", customSource: "", visual: null, synth: null, generatedAbc: "" };
   let catalogData = null;
   let mediaRecorder = null;
   let recordingStream = null;
@@ -387,8 +387,6 @@
       setTimeout(() => document.body.classList.remove("printing-score"), 500);
     });
     makeScore(showToast);
-    state.mascot?.destroy?.();
-    state.mascot = window.ScoreAtlasMascot?.attachArranger() || null;
   }
 
   window.ScoreAtlasArranger = {
@@ -396,8 +394,6 @@
     mount,
     stop: () => {
       state.synth?.stop?.();
-      state.mascot?.destroy?.();
-      state.mascot = null;
       if (mediaRecorder?.state === "recording") mediaRecorder.stop();
       else stopRecordingTracks();
     }
