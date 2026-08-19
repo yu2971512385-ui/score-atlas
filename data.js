@@ -10007,7 +10007,7 @@ window.SCORE_ATLAS_DATA = {
         "violin"
       ],
       "summary": "以定音鼓动机开篇，通过宽广结构和高贵抒情将独奏者融入交响性整体。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Beethoven%20Violin%20Concerto%20Op.61",
+      "sourceUrl": "https://imslp.org/wiki/Violin_Concerto%2C_Op.61_%28Beethoven%2C_Ludwig_van%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10025,7 +10025,7 @@ window.SCORE_ATLAS_DATA = {
         "violin"
       ],
       "summary": "独奏小提琴在简短前导后直接进入，三个乐章连续演奏，结构流畅而技巧鲜明。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Mendelssohn%20Violin%20Concerto%20Op.64",
+      "sourceUrl": "https://imslp.org/wiki/Violin_Concerto%2C_Op.64_%28Mendelssohn%2C_Felix%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10043,7 +10043,7 @@ window.SCORE_ATLAS_DATA = {
         "violin"
       ],
       "summary": "将独奏小提琴置于厚重交响结构中，强调长线发展、节奏置换和乐队对话。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Brahms%20Violin%20Concerto%20Op.77",
+      "sourceUrl": "https://imslp.org/wiki/Violin%20Concerto%2C%20Op.77%20%28Brahms%2C%20Johannes%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10061,7 +10061,7 @@ window.SCORE_ATLAS_DATA = {
         "violin"
       ],
       "summary": "优雅古典风格中突然插入具异域色彩的终曲段落，因此常被称为“土耳其”协奏曲。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Mozart%20Violin%20Concerto%20No.5%20K.219",
+      "sourceUrl": "https://imslp.org/wiki/Violin_Concerto_No.5_in_A_major%2C_K.219_%28Mozart%2C_Wolfgang_Amadeus%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10168,7 +10168,7 @@ window.SCORE_ATLAS_DATA = {
         "cello"
       ],
       "summary": "古典协奏曲的清晰结构与大提琴中高音区的灵活技巧结合，三乐章性格对比鲜明。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Haydn%20Cello%20Concerto%20No.1%20Hob.VIIb%3A1",
+      "sourceUrl": "https://imslp.org/wiki/Cello_Concerto_No.1_in_C_major%2C_Hob.VIIb%3A1_%28Haydn%2C_Joseph%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10186,7 +10186,7 @@ window.SCORE_ATLAS_DATA = {
         "cello"
       ],
       "summary": "三乐章不间断连续，独奏声部更像内心独白而非外在炫技。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Schumann%20Cello%20Concerto%20Op.129",
+      "sourceUrl": "https://imslp.org/wiki/Cello%20Concerto%2C%20Op.129%20%28Schumann%2C%20Robert%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10204,7 +10204,7 @@ window.SCORE_ATLAS_DATA = {
         "cello"
       ],
       "summary": "独奏者在乐队强奏后立即进入，三个部分紧密相连，篇幅凝练而技巧密度高。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Saint-Saens%20Cello%20Concerto%20No.1%20Op.33",
+      "sourceUrl": "https://imslp.org/wiki/Cello_Concerto_No.1_in_a_minor%2C_Op.33_%28Saint-Sa%C3%ABns%2C_Camille%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10223,7 +10223,7 @@ window.SCORE_ATLAS_DATA = {
         "piano"
       ],
       "summary": "大提琴的长线旋律浮在钢琴流动分解和弦上，以克制和平稳气息取胜。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Saint-Saens%20The%20Swan%20Le%20Cygne",
+      "sourceUrl": "https://imslp.org/wiki/Le_Cygne_%28Saint-Sa%C3%ABns%2C_Camille%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10241,7 +10241,7 @@ window.SCORE_ATLAS_DATA = {
         "cello"
       ],
       "summary": "交响规模、英雄性主题与私密挽歌情绪并置，终曲结尾的回望极具情感重量。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Dvorak%20Cello%20Concerto%20Op.104",
+      "sourceUrl": "https://imslp.org/wiki/Cello_Concerto%2C_Op.104_%28Dvo%C5%99%C3%A1k%2C_Anton%C3%ADn%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
@@ -10259,7 +10259,7 @@ window.SCORE_ATLAS_DATA = {
         "cello"
       ],
       "summary": "第一次世界大战后写成的内省作品，四乐章在追忆、谐谑与悲剧紧迫感之间转换。",
-      "sourceUrl": "https://imslp.org/wiki/Special:Search?search=Elgar%20Cello%20Concerto%20Op.85",
+      "sourceUrl": "https://imslp.org/wiki/Cello_Concerto%2C_Op.85_%28Elgar%2C_Edward%29",
       "rights": "link_only",
       "sourceName": "IMSLP / Petrucci Music Library",
       "license": "请在来源页按所在地区核验具体版本",
