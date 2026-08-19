@@ -507,6 +507,34 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
 .score-placeholder strong { font-family: Georgia, "Songti SC", serif; font-size: 23px; line-height: 1.3; }
 .score-placeholder span { display: block; margin-top: 8px; color: var(--muted); font-size: 12px; }
 
+.score-fallback {
+  color: var(--ink);
+  background: #f5f2ed;
+}
+
+.score-fallback-inner {
+  width: min(100%, 420px);
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+}
+
+.score-fallback svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 7px;
+  color: var(--gold);
+}
+
+.score-fallback p,
+.score-fallback small { margin: 0; }
+.score-fallback p { color: var(--gold); font-size: 11px; font-weight: 800; }
+.score-fallback small { max-width: 340px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.score-fallback.compact svg { width: 28px; height: 28px; margin-bottom: 2px; }
+.score-fallback.compact p { font-size: 9px; }
+.score-fallback.compact strong { font-size: 21px; }
+.score-fallback.compact span { max-width: 100%; overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+
 .badge-row {
   position: absolute;
   left: 10px;
@@ -777,6 +805,17 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
 
 .score-preview .score-placeholder { min-height: 520px; }
 
+.score-preview.is-placeholder {
+  width: 100%;
+  min-width: 0;
+  height: 380px;
+  min-height: 380px;
+}
+
+.score-preview.is-placeholder .score-placeholder {
+  min-height: 0;
+}
+
 .detail-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -806,6 +845,17 @@ svg { width: 20px; height: 20px; stroke-width: 1.8; }
   flex-wrap: wrap;
   gap: 10px;
 }
+
+.related-open {
+  margin-top: 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+}
+
+.related-open h3 { margin: 0; font-family: Georgia, "Songti SC", serif; font-size: 20px; }
+.related-open p { margin: 5px 0 14px; color: var(--muted); font-size: 12px; }
+.related-open > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.related-open .button { font-size: 12px; }
 
 .search-page-form {
   position: relative;
@@ -1185,6 +1235,9 @@ noscript {
   .score-preview,
   .score-preview img,
   .score-preview .score-placeholder { min-height: 360px; }
+  .score-preview.is-placeholder,
+  .score-preview.is-placeholder .score-placeholder { min-height: 260px; }
+  .score-preview.is-placeholder { height: 260px; }
   .score-preview img { max-height: 520px; object-fit: cover; }
   .detail-meta { grid-template-columns: 1fr; }
   .action-row .button { flex: 1 1 150px; }
