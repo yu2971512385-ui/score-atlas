@@ -140,6 +140,37 @@
     return person.roles.map(role => roleLabels[role] || role).join(" / ");
   }
 
+  function sourceCapability(work) {
+    const source = work.sourceName || "来源页";
+    if (/IMSLP/i.test(source) || work.sourceUrl?.includes("imslp.org")) {
+      return { kicker: "来源曲谱库", title: "可在 IMSLP 浏览多个版本", note: "请按所在地区、编制和版本标记选择可用曲谱。", action: "浏览曲谱版本" };
+    }
+    if (/CPDL/i.test(source) || work.sourceUrl?.includes("cpdl.org")) {
+      return { kicker: "合唱曲谱库", title: "可在 CPDL 浏览合唱版本", note: "请在来源页核对具体编制、编辑者与许可。", action: "浏览合唱版本" };
+    }
+    return { kicker: "作品资料", title: "本站暂未收录开放曲谱", note: "当前来源提供作品介绍、馆藏或版权信息，不代表可直接下载曲谱。", action: "查看作品资料" };
+  }
+
+  function scoreFallback(work, { hidden = false, detail = false } = {}) {
+    const composer = composerFor(work);
+    const source = work.sourceName || "来源页";
+    const capability = sourceCapability(work);
+    const previewFailed = Boolean(work.previewUrl);
+    const title = previewFailed ? "曲谱预览暂时无法显示" : capability.title;
+    const note = previewFailed
+      ? (work.downloadUrl ? "仍可使用详情页的下载按钮或打开来源页。" : capability.note)
+      : capability.note;
+    return `<div class="score-placeholder score-fallback ${detail ? "detail" : "compact"}" ${hidden ? "hidden" : ""}>
+      <div class="score-fallback-inner">
+        <i data-lucide="file-search"></i>
+        <p>${escapeHtml(previewFailed ? "预览备用封面" : capability.kicker)}</p>
+        <strong>${escapeHtml(detail ? title : (work.catalog || work.title))}</strong>
+        <span>${escapeHtml(detail ? `${work.catalog || work.title} · ${composer?.name || "未知作曲家"}` : source)}</span>
+        ${detail ? `<small>${escapeHtml(note)}</small>` : ""}
+      </div>
+    </div>`;
+  }
+
   function workCard(work) {
     const composer = composerFor(work);
     const preview = workPreview(work);
@@ -149,10 +180,8 @@
     return `
       <article class="work-card">
         <a class="work-cover" href="#/work/${encodeURIComponent(work.id)}" aria-label="查看${escapeHtml(work.title)}">
-          ${preview ? `<img src="${escapeHtml(preview)}" alt="${escapeHtml(work.title)}曲谱预览" loading="lazy" referrerpolicy="no-referrer">` : ""}
-          <div class="score-placeholder" ${preview ? "hidden" : ""}>
-            <div><strong>${escapeHtml(work.catalog || work.title)}</strong><span>${escapeHtml(work.original)}</span></div>
-          </div>
+          ${preview ? `<img data-score-preview src="${escapeHtml(preview)}" alt="${escapeHtml(work.title)}曲谱预览" loading="lazy" referrerpolicy="no-referrer">` : ""}
+          ${scoreFallback(work, { hidden: Boolean(preview) })}
           <div class="badge-row">
             ${rights}
             <span class="badge">${escapeHtml(work.genre)}</span>
@@ -312,7 +341,8 @@
     const instrument = instrumentById.get(instrumentId);
     if (!instrument) return renderNotFound();
     const tab = ["works", "composers", "performers"].includes(params.get("tab")) ? params.get("tab") : "works";
-    const allWorks = data.works.filter(work => work.instruments.includes(instrumentId));
+    const allWorks = data.works.filter(work => work.instruments.includes(instrumentId))
+      .sort((a, b) => Number(Boolean(b.downloadUrl)) - Number(Boolean(a.downloadUrl)));
     const composerIds = [...new Set(allWorks.map(work => work.composerId))];
     const composers = composerIds.map(id => personById.get(id)).filter(Boolean);
     const performers = data.people.filter(person => person.instruments?.includes(instrumentId) && (person.roles.includes("performer") || person.roles.includes("ensemble")));
@@ -421,7 +451,7 @@
   function rightsTitle(work) {
     if (work.rights === "public_domain") return "公共领域版本";
     if (work.rights === "open_license") return "开放授权版本";
-    return "前往来源核验版本";
+    return sourceCapability(work).title;
   }
 
   function renderWork(workId) {
@@ -434,6 +464,13 @@
     const download = work.downloadUrl
       ? `<a class="button teal" href="${escapeHtml(work.downloadUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="file-down"></i>打开${escapeHtml(work.downloadLabel || " PDF")}</a>`
       : "";
+    const sourceInfo = sourceCapability(work);
+    const relatedOpen = !work.downloadUrl && work.catalog
+      ? data.works.filter(candidate => candidate.id !== work.id
+        && candidate.composerId === work.composerId
+        && candidate.catalog?.trim().toLowerCase() === work.catalog.trim().toLowerCase()
+        && candidate.downloadUrl).slice(0, 6)
+      : [];
     const rightsClass = work.downloadUrl ? "" : "link-only";
     return `${pageHero({
       eyebrow: `${work.genre} · ${work.catalog || "作品"}`,
@@ -441,9 +478,10 @@
       original: work.original,
       crumbs: [{ label: "首页", href: "#/" }, { label: composer?.name || "作曲家", href: composer ? `#/person/${composer.id}` : "#/people" }, { label: work.title }],
       actions: `${favoriteButton("work", work.id)}<button class="icon-button" type="button" data-share aria-label="分享当前页" title="分享"><i data-lucide="share-2"></i></button>`
-    })}<section class="page-section"><div class="page-width work-detail">
-      <div class="score-preview">
-        ${preview ? `<img src="${escapeHtml(preview)}" alt="${escapeHtml(work.title)}曲谱预览" referrerpolicy="no-referrer">` : `<div class="score-placeholder"><div><strong>${escapeHtml(work.catalog || work.title)}</strong><span>${escapeHtml(work.original)}</span></div></div>`}
+    })}<section class="page-section work-detail-section"><div class="page-width work-detail">
+      <div class="score-preview ${preview ? "" : "is-placeholder"}">
+        ${preview ? `<img data-score-preview src="${escapeHtml(preview)}" alt="${escapeHtml(work.title)}曲谱预览" referrerpolicy="no-referrer">` : ""}
+        ${scoreFallback(work, { hidden: Boolean(preview), detail: true })}
       </div>
       <div>
         <div class="prose">
@@ -464,8 +502,9 @@
         </div>
         <div class="action-row">
           ${download}
-          <a class="button secondary" href="${escapeHtml(work.sourceUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="external-link"></i>查看来源页</a>
+          <a class="button secondary" href="${escapeHtml(work.sourceUrl)}" target="_blank" rel="noopener noreferrer"><i data-lucide="external-link"></i>${escapeHtml(work.downloadUrl ? "查看来源页" : sourceInfo.action)}</a>
         </div>
+        ${relatedOpen.length ? `<div class="related-open"><h3>本站已有相关开放乐章</h3><p>以下条目与本作作品号一致，并分别提供经过核验的开放曲谱。</p><div>${relatedOpen.map(candidate => `<a class="button secondary" href="#/work/${encodeURIComponent(candidate.id)}"><i data-lucide="music-2"></i>${escapeHtml(candidate.title)}</a>`).join("")}</div></div>` : ""}
       </div>
     </div></section>`;
   }
@@ -571,9 +610,12 @@
   }
 
   function setupImageFallbacks() {
-    app.querySelectorAll(".work-cover img").forEach(image => image.addEventListener("error", () => {
+    app.querySelectorAll("img[data-score-preview]").forEach(image => image.addEventListener("error", () => {
       image.hidden = true;
-      image.nextElementSibling?.removeAttribute("hidden");
+      const container = image.parentElement;
+      container?.querySelector(".score-fallback")?.removeAttribute("hidden");
+      container?.classList.add("is-placeholder");
+      hydrateIcons();
     }, { once: true }));
   }
 
@@ -688,6 +730,6 @@
   });
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5.1").catch(() => {}));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5.2").catch(() => {}));
   }
 })();
