@@ -4,8 +4,8 @@
   "description": "浏览中外开放曲谱，并在本机将旋律或授权音频转为不同乐器谱。",
   "start_url": "./#/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#182126",
+  "background_color": "#f5b7c9",
+  "theme_color": "#f5b7c9",
   "icons": [
     {
       "src": "assets/icon.svg",
