@@ -683,12 +683,11 @@
   if (bootLoader) requestAnimationFrame(() => {
     bootLoader.classList.add("is-ready");
     setTimeout(() => {
-      window.__scoreAtlasBootController?.destroy?.();
       bootLoader.remove();
     }, 320);
   });
 
   if ("serviceWorker" in navigator && location.protocol === "https:") {
-    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5.0").catch(() => {}));
+    window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js?v=5.1").catch(() => {}));
   }
 })();
