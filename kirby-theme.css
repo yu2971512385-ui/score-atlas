@@ -42,6 +42,246 @@ body::after {
 .stats-strip { background: rgba(255, 255, 255, 0.76); backdrop-filter: blur(5px); }
 .arranger-section { background: rgba(233, 237, 236, 0.58); }
 .mobile-nav { background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(12px); }
+.hero {
+  background-color: var(--kirby-wallpaper-color);
+  background-image: var(--kirby-wallpaper);
+  background-position: right center;
+  background-size: auto 150%;
+}
+
+/* Small, route-aware companions keep the character present without competing
+   with the catalogue, score previews, or primary actions. */
+.brand { position: relative; }
+
+.kirby-brand-companion {
+  width: 34px;
+  height: 30px;
+  margin-left: -3px;
+  object-fit: cover;
+  border-radius: 50%;
+  filter: drop-shadow(0 3px 5px rgba(75, 39, 58, 0.14));
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.page-hero { position: relative; overflow: hidden; }
+.page-hero-inner { position: relative; }
+.page-hero.has-kirby-companion .page-hero-row { padding-right: 174px; }
+
+.kirby-hero-companion {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: -10px;
+  width: 154px;
+  height: 124px;
+  pointer-events: none;
+}
+
+.kirby-hero-companion::after {
+  content: "";
+  position: absolute;
+  left: 11px;
+  right: 11px;
+  bottom: 9px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(109, 66, 86, 0.12);
+  filter: blur(6px);
+}
+
+.kirby-hero-companion-image {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 48% 52% 46% 54%;
+  filter: saturate(0.94) drop-shadow(0 7px 10px rgba(88, 44, 69, 0.13));
+  mix-blend-mode: multiply;
+}
+
+.kirby-spark {
+  position: absolute;
+  z-index: 2;
+  width: 10px;
+  aspect-ratio: 1;
+  background: #e6b94f;
+  clip-path: polygon(50% 0, 61% 38%, 100% 50%, 61% 62%, 50% 100%, 39% 62%, 0 50%, 39% 38%);
+}
+
+.kirby-spark-one { top: 17px; right: 2px; }
+.kirby-spark-two { bottom: 22px; left: 1px; width: 7px; background: #d85b69; }
+
+.hero-inner { position: relative; }
+
+.kirby-home-guide {
+  position: absolute;
+  right: 14px;
+  bottom: 24px;
+  width: 162px;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  pointer-events: none;
+}
+
+.kirby-home-guide-image {
+  width: 116px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 49%;
+  background: rgba(255, 251, 247, 0.88);
+  box-shadow: 0 10px 26px rgba(10, 17, 20, 0.2);
+  mix-blend-mode: screen;
+}
+
+.kirby-home-guide span {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(24, 33, 38, 0.76);
+  backdrop-filter: blur(6px);
+}
+
+.empty-state.has-kirby-empty > div {
+  display: grid;
+  justify-items: center;
+}
+
+.empty-state.has-kirby-empty > div > svg { display: none; }
+
+.kirby-empty-image {
+  width: 116px;
+  height: 92px;
+  margin-bottom: 4px;
+  object-fit: cover;
+  border-radius: 49%;
+  background: #fff9f3;
+  filter: drop-shadow(0 8px 12px rgba(90, 48, 67, 0.13));
+  mix-blend-mode: multiply;
+}
+
+.smart-empty.has-kirby-empty .smart-empty-icon { overflow: hidden; background: #fff8f4; }
+
+.kirby-smart-empty-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  mix-blend-mode: multiply;
+}
+
+.kirby-aside-guide {
+  display: grid;
+  grid-template-columns: 68px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 15px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.kirby-aside-guide-image {
+  width: 68px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 48%;
+  mix-blend-mode: multiply;
+}
+
+.kirby-footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid rgba(24, 33, 38, 0.16);
+  background: rgba(24, 33, 38, 0.92);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+.kirby-footer-inner {
+  width: min(calc(100% - 40px), var(--content));
+  min-height: 112px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto auto;
+  align-items: center;
+  gap: 36px;
+}
+
+.kirby-footer-guide {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.kirby-footer-guide img {
+  width: 72px;
+  height: 57px;
+  flex: 0 0 auto;
+  object-fit: cover;
+  border-radius: 49%;
+  background: #fffaf5;
+  mix-blend-mode: screen;
+}
+
+.kirby-footer-guide strong,
+.kirby-footer-guide span { display: block; }
+.kirby-footer-guide strong { font-family: Georgia, "Songti SC", serif; font-size: 17px; }
+.kirby-footer-guide span { margin-top: 3px; color: #bec8ca; font-size: 11px; }
+
+.kirby-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.kirby-footer-links a {
+  color: #e6ebec;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.kirby-footer-links a:hover { color: #f4cc76; }
+
+.kirby-theme-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.kirby-theme-picker > span { margin-right: 2px; color: #aebabc; font-size: 10px; }
+
+.kirby-theme-picker button {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(255, 255, 255, 0.44);
+  border-radius: 50%;
+  padding: 0;
+  background-color: #f3b6c6;
+  background-image: var(--kirby-swatch);
+  background-position: center 52%;
+  background-size: cover;
+  box-shadow: 0 0 0 2px transparent;
+  cursor: pointer;
+}
+
+.kirby-theme-picker button:hover,
+.kirby-theme-picker button:focus-visible {
+  border-color: white;
+  outline: none;
+}
+
+.kirby-theme-picker button.is-active { border-color: #f5ca69; box-shadow: 0 0 0 2px rgba(245, 202, 105, 0.36); }
+
+.kirby-mobile-peek { display: none; }
 
 .boot-loader {
   position: fixed;
@@ -148,13 +388,93 @@ body::after {
   }
 
   body::after { background: rgba(255, 255, 255, 0.54); }
+  .hero { background-position: var(--kirby-wallpaper-mobile-position); background-size: cover; }
   .page-hero { background: rgba(255, 255, 255, 0.72); }
-  .page-section { background: rgba(255, 255, 255, 0.5); }
+  .page-section { background: rgba(255, 255, 255, 0.68); }
   .work-detail-section { background: rgba(255, 255, 255, 0.96); }
   .arranger-section { background: rgba(233, 237, 236, 0.52); }
   .boot-kirby-card { width: min(320px, 100%); gap: 15px; padding: 22px; }
   .boot-kirby-frame { width: 190px; height: 151px; }
   .boot-kirby-copy strong { font-size: 20px; }
+
+  .kirby-brand-companion {
+    display: none;
+  }
+
+  .page-hero.has-kirby-companion .page-hero-row { min-height: 94px; padding-right: 92px; }
+
+  .kirby-hero-companion {
+    right: -7px;
+    bottom: -5px;
+    width: 92px;
+    height: 74px;
+  }
+
+  .kirby-hero-companion::after { left: 8px; right: 8px; bottom: 5px; height: 8px; }
+  .kirby-spark-one { top: 7px; width: 7px; }
+  .kirby-spark-two { bottom: 12px; width: 5px; }
+
+  .kirby-home-guide {
+    position: static;
+    width: auto;
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .kirby-home-guide-image { width: 58px; height: 46px; box-shadow: 0 6px 16px rgba(10, 17, 20, 0.18); }
+  .kirby-home-guide span { padding: 5px 9px; font-size: 10px; }
+
+  .kirby-empty-image { width: 98px; height: 78px; }
+
+  .person-detail-aside .kirby-aside-guide {
+    grid-column: 1 / -1;
+    grid-template-columns: 62px minmax(0, 1fr);
+    max-width: none;
+  }
+
+  html[data-kirby-route="person"] .page-section { background: rgba(255, 255, 255, 0.88); }
+
+  .kirby-aside-guide-image { width: 62px; height: 49px; }
+
+  .kirby-footer { padding-bottom: 10px; }
+
+  .kirby-footer-inner {
+    width: calc(100% - 28px);
+    min-height: 132px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 18px 0;
+  }
+
+  .kirby-footer-guide img { width: 62px; height: 49px; }
+  .kirby-footer-guide span { max-width: 142px; }
+  .kirby-footer-links { display: none; }
+  .kirby-theme-picker > span { display: none; }
+  .kirby-theme-picker button { width: 28px; height: 28px; }
+
+  .mobile-nav { overflow: visible; }
+
+  .kirby-mobile-peek {
+    position: absolute;
+    z-index: 0;
+    top: 8px;
+    right: 7px;
+    display: block;
+    width: 46px;
+    height: 37px;
+    object-fit: cover;
+    border: 0;
+    border-radius: 48%;
+    background: #fffaf5;
+    filter: none;
+    mix-blend-mode: multiply;
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .mobile-nav a { position: relative; z-index: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -171,4 +491,11 @@ body::after {
   body::after { display: none !important; }
   .page-section,
   .arranger-section { background: white !important; }
+  .kirby-brand-companion,
+  .kirby-hero-companion,
+  .kirby-home-guide,
+  .kirby-empty-image,
+  .kirby-aside-guide,
+  .kirby-footer,
+  .kirby-mobile-peek { display: none !important; }
 }
